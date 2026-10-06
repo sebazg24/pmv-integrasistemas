@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Capacitación y Soporte</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+        }
+        /* Sidebar Menu */
+        .sidebar {
+            width: 250px;
+            background-color: #1e293b;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+        }
+        .sidebar h2 { text-align: center; font-size: 22px; margin-bottom: 30px; color: #38bdf8; }
+        .menu-item { padding: 15px 25px; cursor: pointer; color: #cbd5e1; font-weight: 500; border-left: 4px solid transparent; }
+        .menu-item:hover, .menu-item.active { background-color: #334155; border-left-color: #38bdf8; color: white; }
+        
+        /* Contenedor Principal */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Barra superior */
+        .topbar {
+            background-color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .breadcrumb { color: #64748b; font-size: 14px; font-weight: bold; }
+        .profile-area { display: flex; align-items: center; gap: 15px; }
+        .notification-bell { background: #e2e8f0; padding: 8px 12px; border-radius: 50%; font-size: 14px; cursor: pointer; }
+        .user-badge { font-size: 14px; background: #f1f5f9; padding: 8px 15px; border-radius: 20px; font-weight: bold; color: #334155; border: 1px solid #cbd5e1; }
+
+        /* Contenido del curso y chat */
+        .content-wrapper {
+            display: flex;
+            padding: 25px;
+            gap: 20px;
+            height: calc(100vh - 120px);
+        }
+
+        /* Área del Simulador */
+        .course-area {
+            flex: 2.5;
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        .course-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .course-header h1 { margin: 0; color: #0f172a; font-size: 22px; }
+        .progress-container { width: 200px; }
+        .progress-text { font-size: 12px; color: #64748b; margin-bottom: 5px; text-align: right; }
+        .progress-bar { background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; }
+        .progress-fill { background: #10b981; width: 33%; height: 100%; }
+
+        .video-placeholder {
+            background-color: #f8fafc;
+            flex: 1;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #64748b;
+            border: 2px dashed #cbd5e1;
+            margin-bottom: 20px;
+            min-height: 250px;
+        }
+        .play-btn { font-size: 40px; margin-bottom: 10px; color: #38bdf8; }
+
+        .steps-container { display: flex; gap: 15px; }
+        .step { flex: 1; background: #f8fafc; padding: 12px; border-radius: 8px; border-left: 4px solid #cbd5e1; }
+        .step.active { border-left-color: #38bdf8; background: #f0f9ff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .step.done { border-left-color: #10b981; }
+        .step h4 { margin: 0 0 5px 0; color: #0f172a; font-size: 14px; }
+        .step p { margin: 0; font-size: 12px; color: #64748b; }
+
+        /* Área del Chat de Soporte */
+        .support-area {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .chat-header {
+            background: #0ea5e9;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+        .status-dot { height: 10px; width: 10px; background-color: #2ecc71; border-radius: 50%; display: inline-block; box-shadow: 0 0 5px #2ecc71;}
+        .chat-messages {
+            flex: 1; padding: 15px; overflow-y: auto; background: #f8fafc; display: flex; flex-direction: column; gap: 10px;
+        }
+        .msg { padding: 10px 12px; border-radius: 12px; font-size: 13px; max-width: 85%; box-shadow: 0 1px 2px rgba(0,0,0,0.05);}
+        .msg.bot { background: white; color: #334155; align-self: flex-start; border-bottom-left-radius: 0; border: 1px solid #e2e8f0; }
+        .msg.human { background: #0ea5e9; color: white; align-self: flex-end; border-bottom-right-radius: 0; }
+        
+        .chat-input { padding: 15px; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; background: white; border-radius: 0 0 10px 10px;}
+        .chat-input input { flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 20px; outline: none; font-size: 13px; }
+        .chat-input button { background: #0ea5e9; color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 13px;}
+    </style>
+</head>
+<body>
+
+    <!-- Menú Lateral -->
+    <div class="sidebar">
+        <h2>🚀 IntegraSistemas</h2>
+        <div class="menu-item">🏠 Inicio / Dashboard</div>
+        <div class="menu-item active">📚 Mis Capacitaciones</div>
+        <div class="menu-item">💬 Historial de Soporte</div>
+        <div class="menu-item">🏆 Mis Certificados</div>
+        <div class="menu-item">⚙️ Configuración</div>
+    </div>
+
+    <div class="main-content">
+        <!-- Barra Superior -->
+        <div class="topbar">
+            <div class="breadcrumb">Mis Capacitaciones > Módulo 1: Adaptación ERP</div>
+            <div class="profile-area">
+                <div class="notification-bell">🔔</div>
+                <div class="user-badge">👤 Carlos Gonzalez (Admin)</div>
+            </div>
+        </div>
+
+        <!-- Contenedor Central -->
+        <div class="content-wrapper">
+            
+            <!-- Simulador -->
+            <div class="course-area">
+                <div class="course-header">
+                    <h1>Módulo 1: Registro en Nuevo Sistema</h1>
+                    <div class="progress-container">
+                        <div class="progress-text">Avance del módulo: 33%</div>
+                        <div class="progress-bar"><div class="progress-fill"></div></div>
+                    </div>
+                </div>
+                
+                <div class="video-placeholder">
+                    <div class="play-btn">▶</div>
+                    <div>Cargando entorno de simulación interactivo...</div>
+                    <div style="font-size: 12px; margin-top: 10px;">El sistema te guiará paso a paso en pantalla.</div>
+                </div>
+
+                <div class="steps-container">
+                    <div class="step done">
+                        <h4>✅ Paso 1</h4>
+                        <p>Ingreso de credenciales de usuario.</p>
+                    </div>
+                    <div class="step active">
+                        <h4>⏳ Paso 2 (Actual)</h4>
+                        <p>Creación de perfil de cliente en base de datos.</p>
+                    </div>
+                    <div class="step">
+                        <h4>🔒 Paso 3</h4>
+                        <p>Generación y exportación de reporte.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat de Soporte -->
+            <div class="support-area">
+                <div class="chat-header">
+                    <span>Soporte Técnico en Vivo 💬</span>
+                    <span title="Técnico conectado"><span class="status-dot"></span> Técnico Online</span>
+                </div>
+                <div class="chat-messages">
+                    <div class="msg bot">
+                        👋 Hola Carlos, soy Sebastián de Soporte IT. Veo que iniciaste el Paso 2 de registro.
+                    </div>
+                    <div class="msg bot">
+                        ¿Pudiste encontrar el botón de "Nuevo Cliente" en el panel superior?
+                    </div>
+                    <div class="msg human">
+                        Hola Sebastián. Sí lo encontré, pero al guardar el RUT me arroja un "Error de formato 404".
+                    </div>
+                    <div class="msg bot">
+                        Entendido. Eso ocurre porque el nuevo sistema no acepta puntos. Ingresa el RUT solo con guion (Ej: 12345678-9) y dale a Guardar. ¡Me avisas si funciona!
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" placeholder="Escribe tu mensaje...">
+                    <button>Enviar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
